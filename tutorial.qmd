@@ -8,7 +8,16 @@ format:
   html:
     toc: true
     toc-depth: 3           
-    toc-expand: 3          
+    toc-expand: 3
+citation:
+  type: webpage
+  title: "Building Your Own R Package: A Tutorial for the UCL R User Group"
+  author:
+    - family: Wu
+      given: Stephanie
+  issued: 2025-11-27
+  url: https://smwu.github.io/r-package-tutorial/tutorial.html 
+          
 ---
 
 > This tutorial provides an introduction to creating, documenting, testing, and releasing an R package with the `usethis`+`devtools` workflow. As an example, we begin with a function for normalising UK postcodes, build a basic package around it, and then discuss how to add features to the package. We’ll create the **`postcoder`** package, export one function, document it, check it, and publish to GitHub. A CRAN submission checklist is included.
