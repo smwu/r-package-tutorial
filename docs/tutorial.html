@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Stephanie Wu">
+<meta name="dcterms.date" content="2025-11-27">
+
+<title>Building Your Own R Package – R Package Tutorial (UK Postcodes)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">R Package Tutorial (UK Postcodes)</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./tutorial.html" aria-current="page"> 
+<span class="menu-text">Tutorial</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">1) Introduction</a>
+  <ul class="collapse">
+  <li><a href="#why-build-an-r-package" id="toc-why-build-an-r-package" class="nav-link" data-scroll-target="#why-build-an-r-package">1.1 Why build an R package?</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">1.2 Getting started</a></li>
+  </ul></li>
+  <li><a href="#basic-package-from-existing-r-code" id="toc-basic-package-from-existing-r-code" class="nav-link" data-scroll-target="#basic-package-from-existing-r-code">2) Basic package from existing R code</a>
+  <ul class="collapse">
+  <li><a href="#turning-your-code-into-functions" id="toc-turning-your-code-into-functions" class="nav-link" data-scroll-target="#turning-your-code-into-functions">2.1 Turning your code into functions</a></li>
+  <li><a href="#create-the-package-skeleton" id="toc-create-the-package-skeleton" class="nav-link" data-scroll-target="#create-the-package-skeleton">2.2 Create the package skeleton</a></li>
+  <li><a href="#license-file" id="toc-license-file" class="nav-link" data-scroll-target="#license-file">2.3 LICENSE file</a></li>
+  <li><a href="#description-file" id="toc-description-file" class="nav-link" data-scroll-target="#description-file">2.4 DESCRIPTION file</a></li>
+  <li><a href="#add-the-function-documentation" id="toc-add-the-function-documentation" class="nav-link" data-scroll-target="#add-the-function-documentation">2.5 Add the function documentation</a></li>
+  <li><a href="#inspecting-the-documentation" id="toc-inspecting-the-documentation" class="nav-link" data-scroll-target="#inspecting-the-documentation">2.6 Inspecting the documentation</a></li>
+  <li><a href="#check-install-locally" id="toc-check-install-locally" class="nav-link" data-scroll-target="#check-install-locally">2.7 Check &amp; install locally</a></li>
+  <li><a href="#cran-and-journal-submission" id="toc-cran-and-journal-submission" class="nav-link" data-scroll-target="#cran-and-journal-submission">2.8 CRAN (and Journal) submission</a></li>
+  </ul></li>
+  <li><a href="#addons-vignette-tests-package-data-rcpp-citation" id="toc-addons-vignette-tests-package-data-rcpp-citation" class="nav-link" data-scroll-target="#addons-vignette-tests-package-data-rcpp-citation">3) Add‑ons: vignette, tests, package data, Rcpp, citation</a>
+  <ul class="collapse">
+  <li><a href="#tests-with-testthat" id="toc-tests-with-testthat" class="nav-link" data-scroll-target="#tests-with-testthat">3.1 Tests (with <code>testthat</code>)</a></li>
+  <li><a href="#vignettes" id="toc-vignettes" class="nav-link" data-scroll-target="#vignettes">3.2 Vignettes</a></li>
+  <li><a href="#citation-file" id="toc-citation-file" class="nav-link" data-scroll-target="#citation-file">3.3 Citation file</a></li>
+  <li><a href="#version-control-with-github" id="toc-version-control-with-github" class="nav-link" data-scroll-target="#version-control-with-github">3.4 Version control with GitHub</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">4) Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#summary-of-final-workflow" id="toc-summary-of-final-workflow" class="nav-link" data-scroll-target="#summary-of-final-workflow">4.1 Summary of final Workflow</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">4.2 Resources</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Building Your Own R Package</h1>
+<p class="subtitle lead">A Tutorial for the UCL R User Group</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Stephanie Wu </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 27, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p>This tutorial provides an introduction to creating, documenting, testing, and releasing an R package with the <code>usethis</code>+<code>devtools</code> workflow. As an example, we begin with a function for normalising UK postcodes, build a basic package around it, and then discuss how to add features to the package. We’ll create the <strong><code>postcoder</code></strong> package, export one function, document it, check it, and publish to GitHub. A CRAN submission checklist is included.</p>
+</blockquote>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">1) Introduction</h2>
+<section id="why-build-an-r-package" class="level3">
+<h3 class="anchored" data-anchor-id="why-build-an-r-package">1.1 Why build an R package?</h3>
+<p>Turning your code into an R package comes with many advantages, including:</p>
+<ul>
+<li>Keeping your code in a free, accessible, and easily usable format for future users and projects.</li>
+<li>Providing structured documentation, versioning, and testing of functionality.</li>
+<li>Enabling one-line installation of many functions, through GitHub or CRAN.</li>
+</ul>
+</section>
+<section id="getting-started" class="level3">
+<h3 class="anchored" data-anchor-id="getting-started">1.2 Getting started</h3>
+<p>You will want to have the following installed on your device before you start building your package from source code.</p>
+<ul>
+<li>R (≥ 4.2 recommended)</li>
+<li>RStudio</li>
+<li>R build tools (e.g., Rtools on Windows, Xcode Command Line Tools on macOS). Note: these are required for the below development packages to operate properly. Otherwise, an error will be thrown during installation in the next step.</li>
+</ul>
+<p>More information on installing R, RStudio, and R build tools can be found here: <a href="https://ohdsi.github.io/Hades/rSetup.html" class="uri">https://ohdsi.github.io/Hades/rSetup.html</a>.</p>
+<p>Please also install the <code>usethis</code>, <code>devtools</code>, <code>roxygen2</code>, <code>testthat</code>, <code>pkgdown</code>, and <code>remotes</code> packages and then load them by running the following code in RStudio:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncomment below code to install</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(c("usethis","devtools","roxygen2","testthat","pkgdown","remotes"))</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(usethis)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(roxygen2)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(testthat)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pkgdown)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(remotes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+</section>
+<section id="basic-package-from-existing-r-code" class="level2">
+<h2 class="anchored" data-anchor-id="basic-package-from-existing-r-code">2) Basic package from existing R code</h2>
+<p>For this tutorial, we’ll be using example R code that converts UK postcodes into standardised formats.</p>
+<p>UK postcodes must be in the following format: 5-7 alphanumeric characters split into two parts, with a single space in the middle and with letters in upper case. The two parts are:</p>
+<ul>
+<li><strong>Outward code</strong> (specifies area and district): 2-4 characters before the space, starting with a letter. E.g., (“WC1E”, “NW1”, “EH1”, “SP4”)</li>
+<li><strong>Inward code</strong> (specifies sector and unit): 3 characters after the space, starting with a number. (E.g., “6BT”, “2DB”, “2NG”, “7DE”).</li>
+</ul>
+<p>Example postcodes include “WC1E 6BT” (UCL), “NW1 2DB” (British Library), “EH1 2NG” (Edinburgh castle), and “SP4 7DE” (Stonehenge).</p>
+<p>Oftentimes, in collected data, postcodes may appear in messy formats that need to be standardised. Here are some examples of issues that may arise and how we would want to handle them.</p>
+<ol type="1">
+<li>Letters not in uppercase: “wc1e 6bt” -&gt; “WC1E 6BT”</li>
+<li>Non-alphanumeric characters (e.g., spaces, dashes, punctuation): “.NW12DB” -&gt; “NW1 2DB”</li>
+<li>Missing the single space before the last three characters: “EH12NG” -&gt; “EH1 2NG”</li>
+</ol>
+<p>The following R code converts two mis-formatted postcodes (“wc1e.6bt” and “nw1-2db”) into the acceptable standardised format and also rejects an invalid postcode (“INVALID”). Since this code is vectorised, it can handle multiple postcodes at the same time.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example postcodes that need cleaning</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"wc1e.6bt"</span>, <span class="st">"nw1-2db"</span>, <span class="st">"INVALID"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Conver to uppercase </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>x_upper <span class="ot">&lt;-</span> <span class="fu">toupper</span>(x)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>x_upper</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "WC1E.6BT" "NW1-2DB"  "INVALID" </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Remove non-alphanumeric and keep only A–Z and 0–9</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>x_alphnum <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_remove_all</span>(x_upper, <span class="st">"[^A-Z0-9]"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>x_alphnum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "WC1E6BT" "NW12DB"  "INVALID"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Ensure a single space before inward code (last 3 chars) </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that postcodes are 5–7 chars (excluding the space).</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nchar</span>(x_alphnum)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>n</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7 6 7</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>wrong_length <span class="ot">&lt;-</span> n <span class="sc">&lt;</span> <span class="dv">5</span> <span class="sc">|</span> n <span class="sc">&gt;</span> <span class="dv">7</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>wrong_length</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE FALSE</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>x_reformat <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">is.na</span>(x_alphnum) <span class="sc">&amp;</span> <span class="sc">!</span>wrong_length, <span class="co"># check length and not NA</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="fu">substr</span>(x_alphnum, <span class="dv">1</span>, n <span class="sc">-</span> <span class="dv">3</span>),  <span class="co"># outward code</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">" "</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">substr</span>(x_alphnum, n <span class="sc">-</span> <span class="dv">2</span>, n)),  <span class="co"># inward code</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  x_alphnum)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>x_reformat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "WC1E 6BT" "NW1 2DB"  "INVA LID"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Regex expression of possible valid alphanumeric orderings for UK postcodes</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>strict_form <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"^"</span>,                     <span class="co"># start of string</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"("</span>,                     <span class="co"># start of outward code</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"([A-Z][0-9]{1,2})|"</span>,    <span class="co"># letter + 1 or 2 digits</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"([A-Z]{2}[0-9]{1,2})|"</span>, <span class="co"># 2 letters + 1 or 2 digits</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"([A-Z][0-9][A-Z])|"</span>,    <span class="co"># letter + digit + letter</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"([A-Z]{2}[0-9][A-Z]?)"</span>, <span class="co"># 1 letters + digit + optional letter</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">") "</span>,                    <span class="co"># end of outward code + space</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"[0-9][A-Z]{2}"</span>,         <span class="co"># inward code: space + digit + 2 letters</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"$"</span>                      <span class="co"># end of string</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>strict_form</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "^(([A-Z][0-9]{1,2})|([A-Z]{2}[0-9]{1,2})|([A-Z][0-9][A-Z])|([A-Z]{2}[0-9][A-Z]?)) [0-9][A-Z]{2}$"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the postcode is found inthe regex-specified orderings</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>valid <span class="ot">&lt;-</span> <span class="fu">grepl</span>(strict_form, x_reformat)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>valid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  TRUE  TRUE FALSE</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set invalid postcodes to NA_character_</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>x_reformat[wrong_length <span class="sc">|</span> <span class="sc">!</span>valid] <span class="ot">&lt;-</span> <span class="cn">NA_character_</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>x_reformat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "WC1E 6BT" "NW1 2DB"  NA        </code></pre>
+</div>
+</div>
+<section id="turning-your-code-into-functions" class="level3">
+<h3 class="anchored" data-anchor-id="turning-your-code-into-functions">2.1 Turning your code into functions</h3>
+<p>The first step to creating an R package is to turn your code into functions that take in parameters and perform actions. This allows you to easily perform the actions multiple times, while varying the input parameters.</p>
+<p>We will now convert our postcode formatting code into a single function that takes in a vector of postcodes (<code>x</code>) and returns the re-formatted version of the vector (<code>x_reformat</code>).</p>
+<p>We’ll also add in a <em>stop function</em> that makes sure the input is a character vector, throwing an error if not.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>uk_postcode_reformat <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check input is a character vector</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.character</span>(x)) {</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"`x` must be character vector; use as.character() first."</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1) Conver to uppercase </span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  x_upper <span class="ot">&lt;-</span> <span class="fu">toupper</span>(x)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  x_upper</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2) Remove non-alphanumeric and keep only A–Z and 0–9</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  x_alphnum <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_remove_all</span>(x_upper, <span class="st">"[^A-Z0-9]"</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  x_alphnum</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3) Ensure a single space before inward code (last 3 chars) </span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check that postcodes are 5–7 chars (excluding the space).</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nchar</span>(x_alphnum)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  n</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  wrong_length <span class="ot">&lt;-</span> n <span class="sc">&lt;</span> <span class="dv">5</span> <span class="sc">|</span> n <span class="sc">&gt;</span> <span class="dv">7</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  wrong_length</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  x_reformat <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(x_alphnum) <span class="sc">&amp;</span> <span class="sc">!</span>wrong_length, <span class="co"># check length and not NA</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="fu">substr</span>(x_alphnum, <span class="dv">1</span>, n <span class="sc">-</span> <span class="dv">3</span>),  <span class="co"># outward code</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>           <span class="st">" "</span>, </span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>           <span class="fu">substr</span>(x_alphnum, n <span class="sc">-</span> <span class="dv">2</span>, n)),  <span class="co"># inward code</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>    x_alphnum)</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>  x_reformat</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Regex expression of possible valid alphanumeric orderings for UK postcodes</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>  strict_form <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"^"</span>,                     <span class="co"># start of string</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"("</span>,                     <span class="co"># start of outward code</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z][0-9]{1,2})|"</span>,    <span class="co"># letter + 1 or 2 digits</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z]{2}[0-9]{1,2})|"</span>, <span class="co"># 2 letters + 1 or 2 digits</span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z][0-9][A-Z])|"</span>,    <span class="co"># letter + digit + letter</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z]{2}[0-9][A-Z]?)"</span>, <span class="co"># 1 letters + digit + optional letter</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">") "</span>,                    <span class="co"># end of outward code + space</span></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">"[0-9][A-Z]{2}"</span>,         <span class="co"># inward code: space + digit + 2 letters</span></span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>    <span class="st">"$"</span>                      <span class="co"># end of string</span></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>  strict_form</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check that the postcode is found inthe regex-specified orderings</span></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>  valid <span class="ot">&lt;-</span> <span class="fu">grepl</span>(strict_form, x_reformat)</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>  valid</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Set invalid postcodes to NA_character_</span></span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>  x_reformat[wrong_length <span class="sc">|</span> <span class="sc">!</span>valid] <span class="ot">&lt;-</span> <span class="cn">NA_character_</span></span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return reformatted postcode</span></span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x_reformat)</span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Once we have the function, we can easily reformat many postcodes.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>example_postcodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"wc1e 6bt"</span>, <span class="st">".NW12DB"</span>, <span class="st">"EH12NG"</span>, <span class="st">"SP4 7DE"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>example_postcodes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "wc1e 6bt" ".NW12DB"  "EH12NG"   "SP4 7DE" </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>invalid_postcodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"sw1a1aa1"</span>, <span class="st">" SW1AA "</span>, <span class="st">"hiiii"</span>, <span class="st">"230aaa"</span>, <span class="st">"INVALID"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>invalid_postcodes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "sw1a1aa1" " SW1AA "  "hiiii"    "230aaa"   "INVALID" </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function to reformat valid postcodes and set invalid ones to NA</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">uk_postcode_reformat</span>(<span class="at">x =</span> example_postcodes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "WC1E 6BT" "NW1 2DB"  "EH1 2NG"  "SP4 7DE" </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">uk_postcode_reformat</span>(<span class="at">x =</span> invalid_postcodes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA NA NA NA NA</code></pre>
+</div>
+</div>
+</section>
+<section id="create-the-package-skeleton" class="level3">
+<h3 class="anchored" data-anchor-id="create-the-package-skeleton">2.2 Create the package skeleton</h3>
+<p>Now, we’ll convert this function into a package called <strong><code>postcoder</code></strong>. We can use the <code>create_package()</code> function from the <code>usethis</code> package.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">create_package</span>(<span class="st">"~/Documents/GitHub/postcoder"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Reopen the new project when prompted</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/create_pkg_output.png" class="img-fluid" style="width:100.0%" alt="Package creation output"></p>
+<p>This creates a new R package project folder named <code>postcoder</code> at the specified path. If prompted, open the new project to ensures RStudio switches its working directory to <code>postcoder/</code>.</p>
+<p><img src="images/pkg_project_init.png" class="img-fluid" style="width:100.0%" alt="Package project initialisation"></p>
+<p>On the bottom right, we can see that the folder contains the basic structure of a valid R package:</p>
+<pre class="diagram"><code>postcoder/
+├─ DESCRIPTION        # Package metadata (name, version, title, authors, etc.)
+├─ NAMESPACE          # Manages which functions are exported/imported (auto-generated by roxygen2) ├─ postcoder.Rproj    # R project for the package
+├─ R/                 # All .R function scripts</code></pre>
+<p>You may also see <code>.Rbuildignore</code> (things to ignore when building the package) and <code>.gitignore</code> (things to ignore for GitHub).</p>
+</section>
+<section id="license-file" class="level3">
+<h3 class="anchored" data-anchor-id="license-file">2.3 LICENSE file</h3>
+<p>Every R package must specify a license, so we’ll add a <code>LICENSE</code> file. Here we use the MIT license, which is common for permissive sharing. Other options include <code>use_cc0_license()</code> for public domain release. Replace my name (Stephanie Wu) with your own name as the author of the package.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_mit_license</span>(<span class="st">"Stephanie Wu"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/license.png" class="img-fluid" style="width:100.0%" alt="License file"></p>
+</section>
+<section id="description-file" class="level3">
+<h3 class="anchored" data-anchor-id="description-file">2.4 DESCRIPTION file</h3>
+<p>Next, we’ll fill in <strong>DESCRIPTION</strong> file that include key metadata. Key components include:</p>
+<ul>
+<li><strong><code>Package</code></strong> → Automatically added. Package name</li>
+<li><strong><code>Title</code></strong> → Short, human-readable title (must be in Title Case)</li>
+<li><strong><code>Version</code></strong> → Package version. When choosing a version number, anything that is still in development, will typically look like <code>0.0.0.9000</code>. Otherwise, fully functional packages ready for release follow a <code>major.minor.patch</code> output (e.g., 1.0.0), where incrementing the <code>patch</code> digit occurs for bug fixes, incrementing the <code>minor</code> digit occurs for new features or functions, and incrementing the <code>major</code> digit occurs if there is a significant restructuring to the package that would break previous code.</li>
+<li><strong><code>Authors@R</code></strong> → Structured author information using <code>person("First","Last", role = c("aut","cre"), email = "you@example.com")</code>. Possible options for roles include author (“aut”), maintainer (“cre”), contributor (“ctb”), and/or copyright holder (“cph”).</li>
+<li><strong><code>Description</code></strong> → A one-sentence summary of what your package does</li>
+<li><strong><code>License</code></strong> → Automatically propagated from <code>use_mit_license()</code>.</li>
+<li><strong><code>Depends</code></strong> → Typically used to specify minimum R version required.</li>
+<li><strong><code>Imports</code></strong> → Packages that are depended on in the functions. Can be added with <code>usethis::use_package("stringr", type = "Imports")</code> for the <code>stringr</code> package, for example.</li>
+<li><strong><code>Suggests</code></strong> → Optional packages, typically used for tests, vignettes, and examples.</li>
+<li><strong><code>Encoding</code></strong> → Automatically added</li>
+<li><strong><code>Roxygen: list(markdown = TRUE)</code></strong> → Automatically added. Indicates that Markdown can be used in roxygen documentation notes.</li>
+<li><strong><code>RoxygenNote:</code></strong> → Automatically added. Roxygen version</li>
+</ul>
+<p>You can edit the file directly in RStudio or Notepad.</p>
+<p>Here’s what your <code>DESCRIPTION</code> file might look like after filling it out.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>Package<span class="sc">:</span> postcoder</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>Title<span class="sc">:</span> Postcode Cleaning and Formatting Utilities <span class="cf">for</span> the UK</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>Version<span class="sc">:</span> <span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">0.9000</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>Authors<span class="sc">@</span>R<span class="sc">:</span> </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">person</span>(<span class="at">given =</span> <span class="st">"Stephanie"</span>, <span class="at">family =</span> <span class="st">"Wu"</span>, </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">email =</span> <span class="st">"stephanie.wu@ucl.ac.uk"</span>, </span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">role =</span> <span class="fu">c</span>(<span class="st">"aut"</span>, <span class="st">"cre"</span>),</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">comment =</span> <span class="fu">c</span>(<span class="at">ORCID =</span> <span class="st">"0000-0001-5110-8407"</span>))</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>Description<span class="sc">:</span> Provides a lightweight helper to normalise UK postcodes by </span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    uppercasing, removing non<span class="sc">-</span>alphanumeric characters, inserting the </span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    required single space before the inward code, and validating the </span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    format against common UK postcode patterns.</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>License<span class="sc">:</span> MIT <span class="sc">+</span> file LICENSE</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>Encoding<span class="sc">:</span> UTF<span class="dv">-8</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>Depends<span class="sc">:</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">R</span> (<span class="sc">&gt;=</span> <span class="dv">3</span>.<span class="fl">5.0</span>)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>Imports<span class="sc">:</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    stringr</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>Roxygen<span class="sc">:</span> <span class="fu">list</span>(<span class="at">markdown =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>RoxygenNote<span class="sc">:</span> <span class="dv">7</span>.<span class="fl">3.3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/description.png" class="img-fluid" style="width:100.0%" alt="Example DESCRIPTION file"></p>
+</section>
+<section id="add-the-function-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="add-the-function-documentation">2.5 Add the function documentation</h3>
+<p>One of the key aspects of creating an R package is adding <code>roxygen</code> documentation to all of the package functions using specially formatted comments. This is then converted using <code>devtools::document()</code> into proper documentation help files that can be displayed when loading the package.</p>
+<p>As a reminder, for this package, we have one main function, <code>uk_postcode_reformat()</code> that reformats UK postcodes into a standardised form.</p>
+<p>To properly document this function for an R package, we need to add the following components:</p>
+<ol type="1">
+<li>Title</li>
+<li>Description</li>
+<li>Input arguments (using <code>@param</code>)</li>
+<li>Output values (using <code>@return</code>)</li>
+<li>(Optional) Additional details (using <code>@details</code>)</li>
+<li>Usage examples (using <code>@examples</code>)</li>
+<li>(Optional) Any other packages (other than base) that are used in the function (using <code>@import package_name</code> for the whole package, or <code>@importFrom package_name function_name</code> for specific functions)</li>
+<li>(Optional) <code>@seealso</code>: Linking to other related functions in the package</li>
+<li>Export the function (using <code>@export</code>). Note: it’s possible to write internal functions that you don’t want to be publicly available. To do this, simply don’t add the <code>@export</code> tag.</li>
+</ol>
+<p>Start by creating an R file with the same name as your function name within the <code>R/</code> subfolder in the package. You can do this using RStudio directly or using the <code>use_r()</code> function, shown below.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_r</span>(<span class="st">"uk_postcode_reformat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Next, past the <code>uk_postcode_reformat()</code> function into this <code>R/uk_postcode_reformat.R</code> file:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Reformat UK postcodes</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' Cleans UK postcodes according to a strict format by converting to uppercase</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">#' and fixing spacing and punctuation.</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param x A character vector of postcodes.</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co">#' @return A character vector `x_reformat` containing the reformatted postcodes.</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">#' @details UK postcodes must be in the following format: 5-7 alphanumeric</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">#' characters split into two parts, with a single space in the middle and with</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">#' letters in upper case. The two parts are: 1) Outward code (specifies area and</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">#' district): 2-4 characters before the space, starting with a letter. E.g.,</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co">#' ("WC1E", "NW1", "EH1", "SP4"); and 2) Inward code (specifies sector and unit):</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="co">#' 3 characters after the space, starting with a number. (E.g., "6BT", "2DB",</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co">#' "2NG", "7DE").</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co">#' Example postcodes include "WC1E 6BT", "NW1 2DB", and "EH1 2NG". Oftentimes,</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co">#' in collected data, postcodes may appear in messy formats that need to be</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co">#' standardised, such as letters not being in uppercase, the inclusion of</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="co">#' non-alphanumeric characters such as dashes and punctuation, missing the</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="co">#' single space before the last three characters, and non-valid combinations of</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="co">#' characters and letters.</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a><span class="co">#' @importFrom stringr</span></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a><span class="co">#' @examples</span></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="co">#' uk_postcode_reformat(c("wc1e 6bt", ".NW12DB", "EH12NG", "SP4 7DE"))</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a><span class="co">#' uk_postcode_reformat(c("sw1a1aa1", " SW1AA ", "hiiii", "230aaa", "INVALID"))</span></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>uk_postcode_reformat <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check input is a character vector</span></span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.character</span>(x)) {</span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"`x` must be character vector; use as.character() first."</span>)</span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1) Conver to uppercase</span></span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>  x_upper <span class="ot">&lt;-</span> <span class="fu">toupper</span>(x)</span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>  x_upper</span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2) Remove non-alphanumeric and keep only A–Z and 0–9</span></span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a>  x_alphnum <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_remove_all</span>(x_upper, <span class="st">"[^A-Z0-9]"</span>)</span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>  x_alphnum</span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3) Ensure a single space before inward code (last 3 chars)</span></span>
+<span id="cb32-48"><a href="#cb32-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check that postcodes are 5–7 chars (excluding the space).</span></span>
+<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nchar</span>(x_alphnum)</span>
+<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a>  n</span>
+<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>  wrong_length <span class="ot">&lt;-</span> n <span class="sc">&lt;</span> <span class="dv">5</span> <span class="sc">|</span> n <span class="sc">&gt;</span> <span class="dv">7</span></span>
+<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a>  wrong_length</span>
+<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a>  x_reformat <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb32-55"><a href="#cb32-55" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(x_alphnum) <span class="sc">&amp;</span> <span class="sc">!</span>wrong_length, <span class="co"># check length and not NA</span></span>
+<span id="cb32-56"><a href="#cb32-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="fu">substr</span>(x_alphnum, <span class="dv">1</span>, n <span class="sc">-</span> <span class="dv">3</span>),  <span class="co"># outward code</span></span>
+<span id="cb32-57"><a href="#cb32-57" aria-hidden="true" tabindex="-1"></a>           <span class="st">" "</span>,</span>
+<span id="cb32-58"><a href="#cb32-58" aria-hidden="true" tabindex="-1"></a>           <span class="fu">substr</span>(x_alphnum, n <span class="sc">-</span> <span class="dv">2</span>, n)),  <span class="co"># inward code</span></span>
+<span id="cb32-59"><a href="#cb32-59" aria-hidden="true" tabindex="-1"></a>    x_alphnum)</span>
+<span id="cb32-60"><a href="#cb32-60" aria-hidden="true" tabindex="-1"></a>  x_reformat</span>
+<span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Regex expression of possible valid alphanumeric orderings for UK postcodes</span></span>
+<span id="cb32-63"><a href="#cb32-63" aria-hidden="true" tabindex="-1"></a>  strict_form <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb32-64"><a href="#cb32-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">"^"</span>,                     <span class="co"># start of string</span></span>
+<span id="cb32-65"><a href="#cb32-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">"("</span>,                     <span class="co"># start of outward code</span></span>
+<span id="cb32-66"><a href="#cb32-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z][0-9]{1,2})|"</span>,    <span class="co"># letter + 1 or 2 digits</span></span>
+<span id="cb32-67"><a href="#cb32-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z]{2}[0-9]{1,2})|"</span>, <span class="co"># 2 letters + 1 or 2 digits</span></span>
+<span id="cb32-68"><a href="#cb32-68" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z][0-9][A-Z])|"</span>,    <span class="co"># letter + digit + letter</span></span>
+<span id="cb32-69"><a href="#cb32-69" aria-hidden="true" tabindex="-1"></a>    <span class="st">"([A-Z]{2}[0-9][A-Z]?)"</span>, <span class="co"># 1 letters + digit + optional letter</span></span>
+<span id="cb32-70"><a href="#cb32-70" aria-hidden="true" tabindex="-1"></a>    <span class="st">") "</span>,                    <span class="co"># end of outward code + space</span></span>
+<span id="cb32-71"><a href="#cb32-71" aria-hidden="true" tabindex="-1"></a>    <span class="st">"[0-9][A-Z]{2}"</span>,         <span class="co"># inward code: space + digit + 2 letters</span></span>
+<span id="cb32-72"><a href="#cb32-72" aria-hidden="true" tabindex="-1"></a>    <span class="st">"$"</span>                      <span class="co"># end of string</span></span>
+<span id="cb32-73"><a href="#cb32-73" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-74"><a href="#cb32-74" aria-hidden="true" tabindex="-1"></a>  strict_form</span>
+<span id="cb32-75"><a href="#cb32-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-76"><a href="#cb32-76" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check that the postcode is found inthe regex-specified orderings</span></span>
+<span id="cb32-77"><a href="#cb32-77" aria-hidden="true" tabindex="-1"></a>  valid <span class="ot">&lt;-</span> <span class="fu">grepl</span>(strict_form, x_reformat)</span>
+<span id="cb32-78"><a href="#cb32-78" aria-hidden="true" tabindex="-1"></a>  valid</span>
+<span id="cb32-79"><a href="#cb32-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-80"><a href="#cb32-80" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Set invalid postcodes to NA_character_</span></span>
+<span id="cb32-81"><a href="#cb32-81" aria-hidden="true" tabindex="-1"></a>  x_reformat[wrong_length <span class="sc">|</span> <span class="sc">!</span>valid] <span class="ot">&lt;-</span> <span class="cn">NA_character_</span></span>
+<span id="cb32-82"><a href="#cb32-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-83"><a href="#cb32-83" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return reformatted postcode</span></span>
+<span id="cb32-84"><a href="#cb32-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x_reformat)</span>
+<span id="cb32-85"><a href="#cb32-85" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Repeat this step for all functions in the package.</p>
+<p>Then, run the following code to automatically generate the <code>Rd</code> documentation file, <code>uk_postcode_reformat.Rd</code>, which will be placed in the <code>man</code> folder. This will also automatically update the <code>NAMESPACE</code> file, which provides a summary of what the package exports and imports.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">document</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The resulting output creates a <code>uk_postcode_reformat.Rd</code> file within the newly created <code>man</code> folder, which contains all of the generated documentation files. Recall that the raw R functions are stored in the <code>R</code> folder. Below is an example of the generated package documentation using <code>roxygen2</code> through the <code>devtools::document()</code> function. This file is read only because it is automatically generated.</p>
+<p><img src="images/Rd_file.png" class="img-fluid" style="width:100.0%" alt="Documentation results">You can also see how the generated NAMESPACE file now includes the exported function. This file is also read only because it is automatically generated.</p>
+<p><img src="images/namespace.png" class="img-fluid" style="width:100.0%" alt="Namespace"></p>
+</section>
+<section id="inspecting-the-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="inspecting-the-documentation">2.6 Inspecting the documentation</h3>
+<p>We can check that the function and documentation are working properly by running the <code>load_all()</code> function to load all of the functions in the package. Then, we try out our newly created <code>uk_postcode_reformat</code> function within the package. Lastly, we use <code>?uk_postcode_reformat</code> to examine the help page for the function, which contains all of the newly created documentation.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>()</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">uk_postcode_reformat</span>(<span class="fu">c</span>(<span class="st">"sw1a1aa"</span>, <span class="st">" SW1A-1AA "</span>, <span class="st">"EC1A1BB"</span>))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>?uk_postcode_reformat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/help_page.png" class="img-fluid" style="width:100.0%" alt="Help page"></p>
+</section>
+<section id="check-install-locally" class="level3">
+<h3 class="anchored" data-anchor-id="check-install-locally">2.7 Check &amp; install locally</h3>
+<p>To make sure the package is functioning properly and is suitable for uploading to CRAN, we use the <code>check()</code> function to check for errors, warnings, and notes. To be sure that there are no errors, you can also check the package on the released version of R on windows (<code>check_win_release()</code>), the development version of R on windows (<code>check_win_devel()</code>), and the released version of R on macOS (<code>check_mac_release()</code>).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">check</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/check1.png" class="img-fluid" style="width:100.0%" alt="Check1"> <img src="images/check2.png" class="img-fluid" style="width:100.0%" alt="Check2"></p>
+<p>If it shows 0 ERRORS, 0 WARNINGS, and 0 NOTES, then your package is now ready to be built. You can build your package using the <code>build()</code> function.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">build</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/build.png" class="img-fluid" style="width:100.0%" alt="Build"> This will create a .tar.gz file containing your package name and version, which can be installed from source. This means that any computer that has this .tar.gz file will be able to install the package using the <code>install.packages()</code> function, specifying that <code>type = "source"</code> and making sure the file location is correct.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"/Users/Stephanie/Documents/GitHub/postcoder_0.0.0.9000.tar.gz"</span>, <span class="at">repos =</span> <span class="cn">NULL</span>, <span class="at">type =</span> <span class="st">"source"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/install.png" class="img-fluid" style="width:100.0%" alt="Install"></p>
+</section>
+<section id="cran-and-journal-submission" class="level3">
+<h3 class="anchored" data-anchor-id="cran-and-journal-submission">2.8 CRAN (and Journal) submission</h3>
+<p>To submit a package to CRAN and make it publicly available, simply upload this .tar.gz file to the CRAN submission form (<a href="https://cran.r-project.org/submit.html" class="uri">https://cran.r-project.org/submit.html</a>). You will be prompted to fill in your details and double check all of the information provided in the DESCRIPTION file. The last step is to confirm submission.</p>
+<p><img src="images/submit_pkg.png" class="img-fluid" style="width:100.0%" alt="Submit package"></p>
+<p>This check list for CRAN submissions is also helpful for checking that your package works on multiple platforms and versions of R: <a href="https://cran.r-project.org/web/packages/submission_checklist.html" class="uri">https://cran.r-project.org/web/packages/submission_checklist.html</a>.</p>
+<p>Typically, there will be an automatic review to make sure the package passes all checks without errors, warnings, and notes. Once this happens, there will be a manual review, where you may receive an email requesting changes to your package.</p>
+<p>Once you have made all the necessary changes, you will get an email confirming that the package is on CRAN, after which anyone will be able to install it with <code>install.packages(postcoder)</code> and use the functions inside.</p>
+<p>You may also want to publish your package in a journal. Some journal options include:</p>
+<ul>
+<li>Journal of Open Source Software: Typically quite fast turnaround</li>
+<li>The R Journal: The official R journal. For more statistically and computationally novel packages</li>
+<li>Journal of Statistical Software: For more statistically novel packages</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="addons-vignette-tests-package-data-rcpp-citation" class="level2">
+<h2 class="anchored" data-anchor-id="addons-vignette-tests-package-data-rcpp-citation">3) Add‑ons: vignette, tests, package data, Rcpp, citation</h2>
+<p>These upgrades are independent—add them when you need them.</p>
+<section id="tests-with-testthat" class="level3">
+<h3 class="anchored" data-anchor-id="tests-with-testthat">3.1 Tests (with <code>testthat</code>)</h3>
+<p>Adding unit tests to your package is a great way to make sure that your functions are running properly. These tests allow you to describe what a function is expected to do, including catching errors, warnings, and messaages. These tests will be run automatically every time you run <code>check()</code>. The <a href="https://r-pkgs.org/testing-basics.html">testing chapter</a> in the <a href="https://r-pkgs.org/">R Packages</a> tutorial provides advice and examples for creating a test suite.</p>
+<p>To create tests, simply run <code>use_testthat()</code> to create the <code>test</code> folder that contains the <code>testthat/</code> subfolder for storing the tests, as well as the <code>testthat.R</code> function for set up. This will also add testthat to the “Suggests” field in the DESCRIPTION file.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_testthat</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/testthat_init.png" class="img-fluid" style="width:100.0%" alt="Initialise tests"></p>
+<p>Then, create a test file for the package function(s) (e.g., <code>uk_postcode_reformat()</code>) using the function <code>use_test()</code>. This will create a file in <code>tests/testthat/</code> titled <code>test-uk_postcode_reformat.R</code> and initialize it with a toy example.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_test</span>(<span class="st">"uk_postcode_reformat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You can now modify this file to include any tests that would be helpful for making sure your function works properly. It’s good practice to try to include some edge cases, including expected errors and NAs. Below is an example of possible tests to add for <code>test-uk_postcode_reformat.R</code>, including checking basic normalisation, already-formatted postcodes, invalid formats, NAs and empty strings, vectorisation of outputs, expected errors, capitalisation, and non-alphanumeric characters.</p>
+<p>To test that the output of your function matches what you would expect, you can use the following functions that allow you to input the expected output:</p>
+<ul>
+<li><code>expect_equal(fn_output, expected_output)</code></li>
+<li><code>expect_error(fn_with_input, expected_error_message)</code></li>
+<li><code>expect_true(expected_true_boolean)</code> (e.g., <code>is.na(out[1])</code>)</li>
+<li><code>expect_length(fn_output, expected_length)</code></li>
+<li><code>expect_identical(fn_output, expected_matching_output)</code></li>
+</ul>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/testthat/test-postcode.R</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"basic normalisation works (case, junk removal, spacing)"</span>, {</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"wc1e 6bt"</span>, <span class="st">".NW12DB"</span>, <span class="st">"EH12NG"</span>, <span class="st">"SP4 7DE"</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">uk_postcode_reformat</span>(x)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(out, <span class="fu">c</span>(<span class="st">"WC1E 6BT"</span>, <span class="st">"NW1 2DB"</span>, <span class="st">"EH1 2NG"</span>, <span class="st">"SP4 7DE"</span>))</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"already-formatted postcodes are unchanged"</span>, {</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SW1A 1AA"</span>, <span class="st">"W1A 0AX"</span>, <span class="st">"M1 1AE"</span>)</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">uk_postcode_reformat</span>(x)</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(out, x)</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"invalid formats become NA (strict format validation)"</span>, {</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># wrong length after cleaning</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  too_short  <span class="ot">&lt;-</span> <span class="st">"A1A"</span>          <span class="co"># &lt; 5</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  too_long   <span class="ot">&lt;-</span> <span class="st">"EC1A11BBB"</span>    <span class="co"># &gt; 7 after cleaning</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># invalid outward/inward shapes</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  bad_mix    <span class="ot">&lt;-</span> <span class="st">"EC1A1B"</span>       <span class="co"># inward is only 2 chars after space</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  wrong_ord  <span class="ot">&lt;-</span> <span class="st">"123 ABC"</span>      <span class="co"># outward must start with a letter</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>  weird      <span class="ot">&lt;-</span> <span class="st">"ABCD 123"</span>     <span class="co"># inward must be digit + 2 letters</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">c</span>(too_short, too_long, bad_mix, wrong_ord, weird)</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">uk_postcode_reformat</span>(x)</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_true</span>(<span class="fu">all</span>(<span class="fu">is.na</span>(out)))</span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"NA and empty strings are handled"</span>, {</span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">""</span>, <span class="st">"  "</span>)</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">uk_postcode_reformat</span>(x)</span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_true</span>(<span class="fu">is.na</span>(out[<span class="dv">1</span>]))</span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_true</span>(<span class="fu">is.na</span>(out[<span class="dv">2</span>]))</span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_true</span>(<span class="fu">is.na</span>(out[<span class="dv">3</span>]))</span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"vectorisation: outputs align with inputs"</span>, {</span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SE1P0AB"</span>, <span class="st">"EC1A1BB"</span>, <span class="st">"BAD"</span>)</span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">uk_postcode_reformat</span>(x)</span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_length</span>(out, <span class="fu">length</span>(x))</span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_identical</span>(out[<span class="dv">1</span>], <span class="st">"SE1P 0AB"</span>)</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_identical</span>(out[<span class="dv">2</span>], <span class="st">"EC1A 1BB"</span>)</span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_true</span>(<span class="fu">is.na</span>(out[<span class="dv">3</span>]))</span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"errors for non-character inputs"</span>, {</span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_error</span>(<span class="fu">uk_postcode_reformat</span>(<span class="dv">123</span>), <span class="st">"`x` must be character vector"</span>)</span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_error</span>(<span class="fu">uk_postcode_reformat</span>(<span class="fu">list</span>(<span class="st">"SW1A 1AA"</span>)), <span class="st">"`x` must be character vector"</span>)</span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"handles lower/upper/mixed case consistently"</span>, {</span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"sw1a1aa"</span>, <span class="st">"Sw1A1aA"</span>, <span class="st">"SW1A1AA"</span>)</span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">uk_postcode_reformat</span>(x)</span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(<span class="fu">unique</span>(out), <span class="st">"SW1A 1AA"</span>)</span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"strips non-alphanumeric characters correctly"</span>, {</span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SE-1P_0AB"</span>, <span class="st">"E C 1 A - 1 B B"</span>, <span class="st">"W1A-0AX!"</span>)</span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">uk_postcode_reformat</span>(x)</span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(out, <span class="fu">c</span>(<span class="st">"SE1P 0AB"</span>, <span class="st">"EC1A 1BB"</span>, <span class="st">"W1A 0AX"</span>))</span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You can then run the tests by clicking the “Run Tests” button in the top right of the file, or by using the <code>devtools::test()</code> function. Ideally, you should see that all of the tests have passed.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">test</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/test.png" class="img-fluid" style="width:100.0%" alt="Tests"></p>
+<p>You can also store built-in datasets in your package to provide examples for functions. These will be put in the <code>data/</code> folder. It is recommended that each file in this folder is an <code>.rda</code> file created by the <code>save()</code> function, containing an R object with the same name as the file.</p>
+<p>This can be done with the <code>usethis::use_data()</code> function, inputting in the data that you wish to store. If you would like the data to be overwritten when regenerated, include <code>overwrite = TRUE</code> as an argument. The <code>use_data_raw()</code> function can be used as an alternative if you want to distinguish between raw and cleaned data.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># e.g., 6-row demo of messy and invalid postcodes for the vignette</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>example_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">pc =</span> <span class="fu">c</span>(<span class="st">"wc1e 6bt"</span>, <span class="st">".NW12DB"</span>, <span class="st">"EH12NG"</span>,<span class="st">"hiiii"</span>, <span class="st">"230aaa"</span>, <span class="st">"INVALID"</span>))</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_data</span>(example_data, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>This will also prompt you to document your data, following the guidelines at <a href="https://r-pkgs.org/data.html" class="uri">https://r-pkgs.org/data.html</a>.</p>
+<p>To document our data, we create an <code>example.R</code> file within the <code>R/</code> folder and add the following information:</p>
+<ul>
+<li>Title</li>
+<li>Description</li>
+<li>An overview of the dataset (using <code>@format</code>). This should contain a list describing each variable.</li>
+<li>The source for the dataset (using <code>@source</code>), often a URL or specified to be via simulation.</li>
+<li>Example usage (using <code>@examples</code>)</li>
+<li>The name of the dataset in quotations</li>
+</ul>
+<p>Datasets should <em>NOT</em> be exported with <code>@export</code> because they are automatically exported using a different process.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Demo messy postcode dataset</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' A tiny dataset used in examples, vignettes, and tests for the</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co">#' `postcoder` package.</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co">#' @format A data frame with 6 rows and 1 variable:</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co">#' \describe{</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="co">#'   \item{example_data}{Character column of messy UK postcodes}</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="co">#' }</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="co">#' @source Simulated for documentation</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="co">#' @examples</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="co">#' data(example_data)</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="co">#' head(example_data)</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="st">"example_data"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the below output, we can see that the <code>example_data</code> object was created and saved as <code>example_data.rda</code> in the <code>data/</code> folder. We have also created documentation for the dataset in <code>R/example_data.R</code>.</p>
+<p><img src="images/example_data.png" class="img-fluid" style="width:100.0%" alt="Example data"></p>
+<p>Then, run <code>devtools::document()</code> to make sure the dataset is documented. You should see “Writing <code>example_data.Rd</code>” as an output. This will also give the dataset a help page that can be accessed with <code>?example_data</code>.</p>
+</section>
+<section id="vignettes" class="level3">
+<h3 class="anchored" data-anchor-id="vignettes">3.2 Vignettes</h3>
+<p>Many packages include vignettes to help introduce users to the package. Vignettes are R Markdown documents that are meant to help users know how to use the functions in the package. They will be installed alongside the package and are meant to be fast and reproducible. Heavy chunks of code can be cached to speed up runtime by setting <code>cache = TRUE</code> in the chunk options.</p>
+<p>To create a vignette, use the <code>usethis::use_vignette()</code> function with the name of the vignette file. Oftentimes, packages will have a main introductory vignette that has the same name as the package, along with potential additional vignettes that explain more complex functionality.</p>
+<p>Initialising a vignette will create the <code>vignettes/</code> folder containing the specified Rmd file: <code>postcoder.Rmd</code>. By default, it will also add <code>knitr</code> and <code>rmarkdown</code> to the Suggests field in the DESCRIPTION file, as well as specify <code>knitr</code> as the vignette builder engine.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_vignette</span>(<span class="st">"postcoder"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You can then populate the vignette file with sections such as introduction, installation, function usage, etc.</p>
+<p>Note: in the below file, please replace all instances of === with ``` when creating the actual vignette .Rmd file.</p>
+<p><img src="images/vignette_init.png" class="img-fluid" style="width:100.0%" alt="Vignette initialisation"></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="sc">---</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>title<span class="sc">:</span> <span class="st">"Getting started with postcoder"</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>date<span class="sc">:</span> <span class="st">"`r format(Sys.Date())`"</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>output<span class="sc">:</span> </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span>html_vignette<span class="sc">:</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>    number_sections<span class="sc">:</span> true</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    toc<span class="sc">:</span> true</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    df_print<span class="sc">:</span> <span class="st">"paged"</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>vignette<span class="sc">:</span> <span class="er">&gt;</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  %\VignetteIndexEntry{postcoder}</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  %\VignetteEngine{knitr<span class="sc">::</span>rmarkdown}</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  %\VignetteEncoding{UTF<span class="dv">-8</span>}</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="sc">---</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Introduction </span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>The <span class="st">`</span><span class="at">postcoder</span><span class="st">`</span> package provides functions to convert UK postcodes into standardised formats. </span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>UK postcodes must be <span class="cf">in</span> the following format<span class="sc">:</span> <span class="dv">5-7</span> alphanumeric characters split into two parts, with a single space <span class="cf">in</span> the middle and with letters <span class="cf">in</span> upper case. The two parts are<span class="sc">:</span> <span class="sc">-</span> <span class="er">*</span>Outward code<span class="sc">*</span> (specifies area and district)<span class="sc">:</span> <span class="dv">2-4</span> characters before the space, starting with a letter. E.g., (<span class="st">"WC1E"</span>, <span class="st">"NW1"</span>, <span class="st">"EH1"</span>, <span class="st">"SP4"</span>) <span class="sc">-</span> <span class="er">*</span>Inward code<span class="sc">*</span> (specifies sector and unit)<span class="sc">:</span> <span class="dv">3</span> characters after the space, starting with a <span class="fu">number.</span> (E.g., <span class="st">"6BT"</span>, <span class="st">"2DB"</span>, <span class="st">"2NG"</span>, <span class="st">"7DE"</span>).</span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>Example postcodes include <span class="st">"WC1E 6BT"</span>, <span class="st">"NW1 2DB"</span>, and <span class="st">"EH1 2NG"</span>. Oftentimes,</span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a><span class="cf">in</span> collected data, postcodes may appear <span class="cf">in</span> messy formats that need to be</span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>standardised, such as letters not being <span class="cf">in</span> uppercase, the inclusion of</span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>non<span class="sc">-</span>alphanumeric characters such as dashes and punctuation, missing the</span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>single space before the last three characters, and non<span class="sc">-</span>valid combinations of</span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>characters and letters.</span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">postcoder</span><span class="st">`</span> contains one main <span class="cf">function</span>, <span class="st">`</span><span class="at">uk_postcode_reformat()</span><span class="st">`</span>, which cleans postcodes by applying the following reformatting steps<span class="sc">:</span></span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a><span class="fl">1.</span> Convert to uppercase</span>
+<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a><span class="fl">2.</span> Remove non<span class="sc">-</span>alphanumeric characteris</span>
+<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a><span class="fl">3.</span> Insert a single space before the inward <span class="fu">code</span> (last <span class="dv">3</span> characters)</span>
+<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a><span class="fl">4.</span> Validate the format, with invalid inputs becoming <span class="st">`</span><span class="at">NA_character</span><span class="st">`</span>.</span>
+<span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a>The vignette shows installation and basic usage.</span>
+<span id="cb45-36"><a href="#cb45-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-37"><a href="#cb45-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Installation</span></span>
+<span id="cb45-38"><a href="#cb45-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-39"><a href="#cb45-39" aria-hidden="true" tabindex="-1"></a>The package can be installed using the options below.</span>
+<span id="cb45-40"><a href="#cb45-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-41"><a href="#cb45-41" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">=</span>{r vig_isntall, eval <span class="ot">=</span> <span class="cn">FALSE</span>}</span>
+<span id="cb45-42"><a href="#cb45-42" aria-hidden="true" tabindex="-1"></a><span class="co"># From CRAN</span></span>
+<span id="cb45-43"><a href="#cb45-43" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"postcoder"</span>)</span>
+<span id="cb45-44"><a href="#cb45-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-45"><a href="#cb45-45" aria-hidden="true" tabindex="-1"></a><span class="co"># From Github</span></span>
+<span id="cb45-46"><a href="#cb45-46" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"smwu/postcoder"</span>)</span>
+<span id="cb45-47"><a href="#cb45-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-48"><a href="#cb45-48" aria-hidden="true" tabindex="-1"></a><span class="co"># From source</span></span>
+<span id="cb45-49"><a href="#cb45-49" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"~/postcoder_0.0.0.9000.tar.gz"</span>, <span class="at">repos =</span> <span class="cn">NULL</span>, <span class="at">type =</span> <span class="st">"source"</span>)</span>
+<span id="cb45-50"><a href="#cb45-50" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">=</span></span>
+<span id="cb45-51"><a href="#cb45-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-52"><a href="#cb45-52" aria-hidden="true" tabindex="-1"></a><span class="er">===</span>{r vig_load, echo <span class="ot">=</span> <span class="cn">FALSE</span>}</span>
+<span id="cb45-53"><a href="#cb45-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the package under the hood for the vignette</span></span>
+<span id="cb45-54"><a href="#cb45-54" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>()</span>
+<span id="cb45-55"><a href="#cb45-55" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">=</span></span>
+<span id="cb45-56"><a href="#cb45-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-57"><a href="#cb45-57" aria-hidden="true" tabindex="-1"></a><span class="er">===</span>{r vig_setup}</span>
+<span id="cb45-58"><a href="#cb45-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(postcoder)</span>
+<span id="cb45-59"><a href="#cb45-59" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">=</span></span>
+<span id="cb45-60"><a href="#cb45-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-61"><a href="#cb45-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Example functionality</span></span>
+<span id="cb45-62"><a href="#cb45-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-63"><a href="#cb45-63" aria-hidden="true" tabindex="-1"></a>The <span class="st">`</span><span class="at">uk_postcode_reformat()</span><span class="st">`</span> <span class="cf">function</span> takes <span class="cf">in</span> a character vector of UK postcodes that need to be reformatted. It returns a character vector containing the reformatted postcodes, with invalid postcodes set to <span class="st">`</span><span class="at">NA_character</span><span class="st">`</span>.</span>
+<span id="cb45-64"><a href="#cb45-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-65"><a href="#cb45-65" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">=</span>{r vig_usage}</span>
+<span id="cb45-66"><a href="#cb45-66" aria-hidden="true" tabindex="-1"></a><span class="co"># Load in the example package data</span></span>
+<span id="cb45-67"><a href="#cb45-67" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(example_data)</span>
+<span id="cb45-68"><a href="#cb45-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-69"><a href="#cb45-69" aria-hidden="true" tabindex="-1"></a><span class="co"># View the data</span></span>
+<span id="cb45-70"><a href="#cb45-70" aria-hidden="true" tabindex="-1"></a>example_data</span>
+<span id="cb45-71"><a href="#cb45-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-72"><a href="#cb45-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to character vector</span></span>
+<span id="cb45-73"><a href="#cb45-73" aria-hidden="true" tabindex="-1"></a>input <span class="ot">&lt;-</span> <span class="fu">as.character</span>(example_data<span class="sc">$</span>pc)</span>
+<span id="cb45-74"><a href="#cb45-74" aria-hidden="true" tabindex="-1"></a>input</span>
+<span id="cb45-75"><a href="#cb45-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-76"><a href="#cb45-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean the postcodes</span></span>
+<span id="cb45-77"><a href="#cb45-77" aria-hidden="true" tabindex="-1"></a><span class="fu">uk_postcode_reformat</span>(input)</span>
+<span id="cb45-78"><a href="#cb45-78" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">=</span></span>
+<span id="cb45-79"><a href="#cb45-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-80"><a href="#cb45-80" aria-hidden="true" tabindex="-1"></a>We obtained the following transformations of the input postcodes<span class="sc">:</span></span>
+<span id="cb45-81"><a href="#cb45-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-82"><a href="#cb45-82" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span> <span class="st">"wc1e 6bt"</span> <span class="ot">-&gt;</span> <span class="st">"WC1E 6BT"</span> (capitalised)</span>
+<span id="cb45-83"><a href="#cb45-83" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span> <span class="st">".NW12DB"</span> <span class="ot">-&gt;</span> <span class="st">"NW1 2DB"</span> (punctuation removed and space added)</span>
+<span id="cb45-84"><a href="#cb45-84" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span> <span class="st">"EH12ND"</span> <span class="ot">-&gt;</span> <span class="st">"EH1 2ND"</span> (space added)</span>
+<span id="cb45-85"><a href="#cb45-85" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span> <span class="st">"hiiii"</span> <span class="ot">-&gt;</span> <span class="cn">NA</span> (invalid format)</span>
+<span id="cb45-86"><a href="#cb45-86" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span> <span class="st">"230aaa"</span> <span class="ot">-&gt;</span> <span class="cn">NA</span> (invalid sequence of numbers and letters)</span>
+<span id="cb45-87"><a href="#cb45-87" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span> <span class="st">"INVALID"</span> <span class="ot">-&gt;</span> <span class="cn">NA</span> (invalid format)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Click on <code>Knit</code> to render the vignette into a vignette document.</p>
+<p><img src="images/vignette.png" class="img-fluid" style="width:100.0%" alt="Vignette"></p>
+<p>It is recommended to also re-run <code>devtools::check()</code> to make sure your package still works.</p>
+</section>
+<section id="citation-file" class="level3">
+<h3 class="anchored" data-anchor-id="citation-file">3.3 Citation file</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_citation</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Creates a template <code>inst/CITATION</code> file. Add in the citation information into the file and save changes.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citHeader</span>(<span class="st">"To cite the postcoder R package in publications, please use:"</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bibentry</span>(</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">bibtype  =</span> <span class="st">"Manual"</span>,</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"postcoder: Postcode Cleaning and Formatting Utilities for the UK"</span>,</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">author   =</span> <span class="fu">person</span>(<span class="at">given =</span> <span class="st">"Stephanie"</span>, <span class="at">family =</span> <span class="st">"Wu"</span>,</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">email =</span> <span class="st">"stephanie.wu@ucl.ac.uk"</span>,</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">role =</span> <span class="fu">c</span>(<span class="st">"aut"</span>, <span class="st">"cre"</span>)),</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">year     =</span> <span class="st">"2025"</span>,</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">note     =</span> <span class="st">"R package version 0.0.0.9000"</span>,</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">url      =</span> <span class="st">"https://github.com/smwu/postcoder"</span>,</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">textVersion =</span> <span class="fu">paste</span>(</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Wu, S. (2025). postcoder: Postcode Cleaning and Formatting Utilities for the UK"</span>,</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"(R package version 0.1.0). Available at https://github.com/smwu/postcoder"</span></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You can then check the citation output.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"postcoder"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/citation.png" class="img-fluid" style="width:100.0%" alt="Citation"></p>
+</section>
+<section id="version-control-with-github" class="level3">
+<h3 class="anchored" data-anchor-id="version-control-with-github">3.4 Version control with GitHub</h3>
+<p>You can also initialise version control with Git and GitHub so you can track changes and store them in a remote repository. Use <code>usethis::use_git()</code> to initialise a local Git repository for your project, and <code>usethis::use_github()</code> to connect the local repository to a new remote repository on GitHub, performing an initial push. Agree to adding commits and to restarting RStudio.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_git</span>()</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_github</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Note: you’ll need to have Git and GitHub configured locally. Click on the call out box for more information.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Click here for instructions for setting up Git and GitHub.">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click here for instructions for setting up Git and GitHub.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>How to set up GitHub:</p>
+<p>1. Create a GitHub account: <a href="https://github.com/signup" class="uri">https://github.com/signup</a>.</p>
+<p>2. Download GitHub Desktop: <a href="https://desktop.github.com/download/" class="uri">https://desktop.github.com/download/</a>.</p>
+<p>3. Open GitHub Desktop and link your account. More detailed instructions can be found here: <a href="https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop" class="uri">https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop</a>.</p>
+<p>4. Now you can clone the repository. In GitHub Desktop, go to File -&gt; Clone Repository. Click on the “URL” tab.</p>
+<p>5. Navigate back to this repository and click on the green “&lt;&gt; Code” button in the top right corner. Click on the “HTTPS” tab and copy the web URL.</p>
+<p>6. Paste the URL into GitHub Desktop. Under “Local Path”, you can choose where you want the cloned repository to be stored on your local computer.</p>
+<p>7. Click “Clone”.</p>
+<p>8. Now, you can make edits to the repository locally and the changes will be displayed in GitHub Desktop. Once you’ve reviewed your changes, you can write a commit message and commit your changes by clicking on the blue “Commit” button. More detailed instructions on committing your changes can be found here: <a href="https://docs.github.com/en/desktop/making-changes-in-a-branch/committing-and-reviewing-changes-to-your-project-in-github-desktop" class="uri">https://docs.github.com/en/desktop/making-changes-in-a-branch/committing-and-reviewing-changes-to-your-project-in-github-desktop</a>.</p>
+<p>9. You can then push your changes to the remote repository. You will first want to pull in any updates that have occurred in the repo by clicking on the “Fetch origin” button in the top right corner. by clicking on “Push origin” in the top right corner.</p>
+<p>If you want to experiment with code changes and isolate your development work from the main branch in the repository, you can also create a separate branch. More information can be found here: <a href="https://docs.github.com/en/desktop/making-changes-in-a-branch/managing-branches-in-github-desktop" class="uri">https://docs.github.com/en/desktop/making-changes-in-a-branch/managing-branches-in-github-desktop</a>.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">4) Conclusion</h2>
+<p>You now have a repeatable workflow to take a function from a script to a shareable, documented, and tested R package!</p>
+<p>Start simple, keep examples fast, and add features (tests, data, CI, website, CRAN) as your needs grow. Small, well‑scoped packages are easier to maintain and much easier for collaborators to use.</p>
+<section id="summary-of-final-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="summary-of-final-workflow">4.1 Summary of final Workflow</h3>
+<p>Here is a summary of the final workflow</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Create package skeleton <code>usethis::create_package("~/postcoder)</code></label></li>
+<li><label><input type="checkbox">Fill in the DESCRIPTION &amp; LICENSE (<code>usethis::use_mit_license("Stephanie Wu")</code>)</label></li>
+<li><label><input type="checkbox">Add <code>uk_postcode_reformat()</code> function and add roxygen documentation comments to export the function (e.g., <code>@export</code>)</label></li>
+<li><label><input type="checkbox">Run <code>devtools::document()</code> to generate documentation. Then inspect with <code>devtools::load_all()</code> and <code>?uk_postcode_reformat</code>.</label></li>
+<li><label><input type="checkbox">Add tests with <code>usethis::use_testthat()</code> and <code>usethis::use_test("uk_postcode_reformat")</code>. Check them with <code>devtools::test()</code>.</label></li>
+<li><label><input type="checkbox">Add a vignette with <code>usethis::use_vignette("postcoder")</code>.</label></li>
+<li><label><input type="checkbox">Check for errors, warnings, and notes with <code>devtools::check()</code></label></li>
+<li><label><input type="checkbox">Add a citation with <code>usethis::use_citation()</code></label></li>
+<li><label><input type="checkbox">Connect to GitHub with <code>usethis::use_git()</code> and <code>usethis::use_github()</code></label></li>
+<li><label><input type="checkbox">Build the package with <code>devtools::build()</code> and submit to CRAN: <a href="https://cran.r-project.org/submit.html">https://cran.r-project.org/submit.html</a> and/or a software journal.</label></li>
+</ul>
+</section>
+<section id="resources" class="level3">
+<h3 class="anchored" data-anchor-id="resources">4.2 Resources</h3>
+<p>Here are some additional resources that may be helpful:</p>
+<ul>
+<li><p><strong>R Packages (2e)</strong>: Wickham &amp; Bryan:<a href="https://r-pkgs.org">https://r-pkgs.org</a></p></li>
+<li><p><strong>usethis</strong>:<a href="https://usethis.r-lib.org">https://usethis.r-lib.org</a></p></li>
+<li><p><strong>devtools</strong>:<a href="https://devtools.r-lib.org">https://devtools.r-lib.org</a></p></li>
+<li><p><strong>roxygen2</strong>:<a href="https://roxygen2.r-lib.org">https://roxygen2.r-lib.org</a></p></li>
+<li><p><strong>testthat</strong>:<a href="https://testthat.r-lib.org">https://testthat.r-lib.org</a></p></li>
+<li><p><strong>pkgdown</strong>:<a href="https://pkgdown.r-lib.org">https://pkgdown.r-lib.org</a></p></li>
+<li><p><strong>Writing R Extensions</strong>(CRAN manual):<a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html">https://cran.r-project.org/doc/manuals/r-release/R-exts.html</a></p></li>
+<li><p><strong>CRAN Repository Policy</strong>:<a href="https://cran.r-project.org/web/packages/policies.html">https://cran.r-project.org/web/packages/policies.html</a></p></li>
+<li><p><strong>GitHub Actions for R</strong>:<a href="https://github.com/r-lib/actions">https://github.com/r-lib/actions</a></p></li>
+<li><p><strong>Quarto documentation</strong>:<a href="https://quarto.org">https://quarto.org</a></p></li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

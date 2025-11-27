@@ -1,0 +1,15 @@
+project:
+  type: website
+  output-dir: docs   # GitHub Pages will serve this folder
+
+website:
+  title: "R Package Tutorial (UK Postcodes)"
+  navbar:
+    left:
+      - href: tutorial.qmd
+        text: Tutorial
+
+format:
+  html:
+    toc: true
+    code-fold: show

@@ -1,0 +1,14 @@
+name: tutorial
+title:
+username: stephwu18
+account: stephwu18
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16183188
+bundleId: 11241306
+url: https://stephwu18.shinyapps.io/tutorial/
+version: 1
+quarto_version: 1.5.57
+quarto_engines: markdown, knitr
+asMultiple: FALSE
+asStatic: FALSE
